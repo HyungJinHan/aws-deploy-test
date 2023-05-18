@@ -34,8 +34,6 @@ or
 
 </details>
 
-<br>
-
 ```bash
 aws s3api put-public-access-block --bucket [BUCKETNAME] --public-access-block-configuration file://[S3PublicAccessBlockConfig.jsonDRECTORY]
 ```
@@ -60,8 +58,6 @@ aws s3api put-public-access-block --bucket [BUCKETNAME] --public-access-block-co
 ```
 
 </details>
-
-<br>
 
 ```bash
 aws s3api put-bucket-policy --bucket [BUCKETNAME] --policy file://[S3BucketPolicy.jsonDIRECTORY]
@@ -180,8 +176,6 @@ aws s3 website s3://[BUCKETNAME]/ --index-document index.html --error-document i
 ```
 
 </details>
-
-<br>
 
 ```bash
 aws cloudfront create-distribution --distribution-config file://[CloudFrontDistributionConfig.jsonDIRECTORY]
