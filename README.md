@@ -51,7 +51,7 @@ aws s3api put-public-access-block --bucket [BUCKET_NAME] --public-access-block-c
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "[BUCKET_ARN]]/*"
+      "Resource": "[BUCKET_ARN]/*"
     }
   ]
 }
