@@ -1,70 +1,194 @@
-# Getting Started with Create React App
+# 전체적인 S3 진행 정리
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 1. 버킷 생성
 
-## Available Scripts
+```bash
+aws s3 mb s3://[BUCKETNAME]
+```
 
-In the project directory, you can run:
+### 2. 버킷과 로컬 빌드 파일 동기화
 
-### `npm start`
+```bash
+aws s3 sync [BUILDFILEDIRECTORY] s3://[BUCKETNAME]
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 3. 퍼블릭 액세스 차단 해제
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+aws s3api put-public-access-block --bucket [BUCKETNAME] --public-access-block-configuration 'IgnorePublicAcls=false, BlockPublicPolicy=false, RestrictPublicBuckets=false, BlockPublicAcls=false'
+```
 
-### `npm test`
+or
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<details>
+<summary><u><i>S3PublicAccessBlockConfig.json</i></u></summary>
 
-### `npm run build`
+```json
+{
+  "IgnorePublicAcls": false, // or false
+  "BlockPublicPolicy": false, // or false
+  "RestrictPublicBuckets": false, // or false
+  "BlockPublicAcls": false // or false
+}
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+</details>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<br>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+aws s3api put-public-access-block --bucket [BUCKETNAME] --public-access-block-configuration file://[S3PublicAccessBlockConfig.jsonDRECTORY]
+```
 
-### `npm run eject`
+### 4. 버킷 정책 추가
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<details>
+<summary><u><i>S3BucketPolicy.json</i></u></summary>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "해당버킷arn/*"
+    }
+  ]
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+</details>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<br>
 
-## Learn More
+```bash
+aws s3api put-bucket-policy --bucket [BUCKETNAME] --policy file://[S3BucketPolicy.jsonDIRECTORY]
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 5. 정적 웹 사이트 호스팅 활성화
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+aws s3 website s3://[BUCKETNAME]/ --index-document index.html --error-document index.html
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# 전체적인 CloudFront 배포 진행 정리
 
-### Analyzing the Bundle Size
+### 1. CloudFront 배포 (json 적용)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<details>
+<summary><u><i>CloudFrontDistributionConfig.json</i></u></summary>
 
-### Making a Progressive Web App
+```json
+{
+  "CallerReference": "함수중복호출방지ID값",
+  "Comment": "해당배포설명",
+  "DefaultRootObject": "기본인덱스문서",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "Id": "해당CloudFront아이디",
+        "DomainName": "배포할버킷명.s3.리전.amazonaws.com",
+        "OriginPath": "",
+        "CustomHeaders": {
+          "Quantity": 0
+        },
+        "S3OriginConfig": {
+          "OriginAccessIdentity": ""
+        },
+        "ConnectionAttempts": 3,
+        "ConnectionTimeout": 10,
+        "OriginShield": {
+          "Enabled": false
+        },
+        "OriginAccessControlId": ""
+      }
+    ]
+  },
+  "OriginGroups": {
+    "Quantity": 0
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "배포할버킷명",
+    "TrustedSigners": {
+      "Enabled": false,
+      "Quantity": 0
+    },
+    "TrustedKeyGroups": {
+      "Enabled": false,
+      "Quantity": 0
+    },
+    "ViewerProtocolPolicy": "redirect-to-https"|"allow-all"|"https-only",
+    "AllowedMethods": {
+      "Quantity": 2,
+      "Items": ["HEAD", "GET"]|["GET", "HEAD", "OPTIONS"]|["GET", "HEAD". "OPTIONS", "PUT", "PATCH", "DELETE"],
+      "CachedMethods": {
+        "Quantity": 2,
+        "Items": ["HEAD", "GET"]|["GET", "HEAD", "OPTIONS"]|["GET", "HEAD". "OPTIONS", "PUT", "PATCH", "DELETE"]
+      }
+    },
+    "SmoothStreaming": false,
+    "Compress": true,
+    "LambdaFunctionAssociations": {
+      "Quantity": 0
+    },
+    "FunctionAssociations": {
+      "Quantity": 0
+    },
+    "FieldLevelEncryptionId": "",
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6"|"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"|"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"|"08627262-05a9-4f76-9ded-b50ca2e3a84f"
+  },
+  "CacheBehaviors": {
+    "Quantity": 0
+  },
+  "CustomErrorResponses": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "ErrorCode": 403,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 10
+      }
+    ]
+  },
+  "Logging": {
+    "Enabled": false,
+    "IncludeCookies": false,
+    "Bucket": "",
+    "Prefix": ""
+  },
+  "PriceClass": "PriceClass_100"|"PriceClass_200"|"PriceClass_All",
+  "Enabled": true,
+  "Restrictions": {
+    "GeoRestriction": {
+      "RestrictionType": "blacklist"|"whitelist"|"none",
+      "Quantity": 2,
+      "Items": ["AF", "AX", ...]
+    }
+  },
+  "WebACLId": "",
+  "HttpVersion": "http1.1"|"http2"|"http3"|"http2and3",
+  "IsIPV6Enabled": true,
+  "ContinuousDeploymentPolicyId": "",
+  "Staging": false
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+</details>
 
-### Advanced Configuration
+<br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+aws cloudfront create-distribution --distribution-config file://[CloudFrontDistributionConfig.jsonDIRECTORY]
+```
 
-### Deployment
+### 2. CloudFront 무효화
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+aws cloudfront create-invalidation --distribution-id CloudFront배포아이디 --paths "/*" # or "/file"
+```
