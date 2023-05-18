@@ -35,7 +35,7 @@ or
 </details>
 
 ```bash
-aws s3api put-public-access-block --bucket [BUCKET_NAME] --public-access-block-configuration file://[S3PublicAccessBlockConfig.json_PATH]
+aws s3api put-public-access-block --bucket [BUCKET_NAME] --public-access-block-configuration file://[S3PublicAccessBlockConfig.json_FILE_PATH]
 ```
 
 ### 4. 버킷 정책 추가
@@ -60,7 +60,7 @@ aws s3api put-public-access-block --bucket [BUCKET_NAME] --public-access-block-c
 </details>
 
 ```bash
-aws s3api put-bucket-policy --bucket [BUCKET_NAME] --policy file://[S3BucketPolicy.jsonPATH]
+aws s3api put-bucket-policy --bucket [BUCKET_NAME] --policy file://[S3BucketPolicy.json_FILE_PATH]
 ```
 
 ### 5. 정적 웹 사이트 호스팅 활성화
@@ -178,11 +178,11 @@ aws s3 website s3://[BUCKET_NAME]/ --index-document index.html --error-document 
 </details>
 
 ```bash
-aws cloudfront create-distribution --distribution-config file://[CloudFrontDistributionConfig.jsonPATH]
+aws cloudfront create-distribution --distribution-config file://[CloudFrontDistributionConfig.json_FILE_PATH]
 ```
 
 ### 2. CloudFront 무효화
 
 ```bash
-aws cloudfront create-invalidation --distribution-id CloudFront배포아이디 --paths "/*" # or "/file"
+aws cloudfront create-invalidation --distribution-id [CloudFront_ID] --paths "/*" # or "/file"
 ```
