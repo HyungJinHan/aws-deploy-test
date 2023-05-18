@@ -69,7 +69,8 @@ aws s3api put-bucket-policy --bucket [BUCKET_NAME] --policy file://[S3BucketPoli
 aws s3 website s3://[BUCKET_NAME]/ --index-document index.html --error-document index.html
 ```
 
----
+<br>
+<br>
 
 # 전체적인 CloudFront 배포 진행 정리
 
