@@ -25,10 +25,6 @@ export const create = createAction(CREATE, (text) => ({ text, id: id++ }));
 export const enter = createAction(ENTER, (id) => id);
 export const leave = createAction(LEAVE, (id) => id);
 
-console.log(changeInput("test"));
-console.log(create("one"));
-console.log(create("two"));
-
 const initialState = {
   input: "",
   list: [
