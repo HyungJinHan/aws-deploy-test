@@ -14,6 +14,7 @@ const WaitingItem = ({ text, entered, onEnter, onLeave }) => {
 };
 
 const WaitingList = ({
+  color,
   input,
   waitingList,
   onChange,
@@ -34,7 +35,7 @@ const WaitingList = ({
 
   return (
     <div className="WaitingList">
-      <h2>대기자 명단</h2>
+      <h2 style={{ color: `${color}` }}>대기자 명단</h2>
       <form onSubmit={onSubmit}>
         <input value={input} onChange={onChange} />
         <button>등록</button>

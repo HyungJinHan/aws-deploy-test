@@ -27,10 +27,11 @@ const WaitingListContainer = (props) => {
     WaitingActions.leave(id);
   };
 
-  const { input, list } = props;
+  const { input, list, color } = props;
 
   return (
     <WaitingList
+      color={color}
       input={input}
       waitingList={list}
       onChange={handleChange}
@@ -44,6 +45,7 @@ const WaitingListContainer = (props) => {
 const mapStateToProps = ({ rootReducer }) => ({
   input: rootReducer.waiting.input,
   list: rootReducer.waiting.list,
+  color: rootReducer.counter.color,
 });
 
 const mapDispatchToProps = (dispatch) => ({
