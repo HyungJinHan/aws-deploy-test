@@ -20,7 +20,7 @@ const CounterContainer = (props) => {
   return (
     <Counter
       color={color}
-      value={number}
+      number={number}
       onIncrement={handleIncrement}
       onDecrement={handleDecrement}
     />
