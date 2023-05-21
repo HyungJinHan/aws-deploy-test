@@ -1,33 +1,31 @@
 import React from "react";
-import WaitingList from "../components/WaitingList/WaitingList";
 import { bindActionCreators } from "redux";
-import * as waitingActions from "../store/modules/waiting";
 import { connect } from "react-redux";
 
+import WaitingList from "../components/WaitingList/WaitingList";
+import * as waitingActions from "../store/modules/waiting";
+
 const WaitingListContainer = (props) => {
+  const { WaitingActions, input, list, color } = props;
+  const { changeInput, create, enter, leave } = WaitingActions;
+
   const handleChange = (e) => {
-    const { WaitingActions } = props;
-    WaitingActions.changeInput(e.target.value);
+    changeInput(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { WaitingActions, input } = props;
-    WaitingActions.create(input);
-    WaitingActions.changeInput("");
+    create(input);
+    changeInput("");
   };
 
   const handleEnter = (id) => {
-    const { WaitingActions } = props;
-    WaitingActions.enter(id);
+    enter(id);
   };
 
   const handleLeave = (id) => {
-    const { WaitingActions } = props;
-    WaitingActions.leave(id);
+    leave(id);
   };
-
-  const { input, list, color } = props;
 
   return (
     <WaitingList
