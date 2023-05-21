@@ -28,11 +28,7 @@ export const leave = createAction(LEAVE, (id) => id);
 
 const initialState = {
   input: "",
-  list: [
-    { id: 0, name: "홍길동", entered: true },
-    { id: 1, name: "엄준식", entered: false },
-    { id: 2, name: "한형진", entered: false },
-  ],
+  list: [],
 };
 
 export default handleActions(
