@@ -1,7 +1,7 @@
 import React from "react";
 import "./Palette.css";
 
-const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
+const colors = ["red", "orange", "yellow", "green", "blue", "navy", "purple"];
 
 const PaletteItem = ({ color, active, onClick }) => {
   return (
@@ -16,7 +16,7 @@ const PaletteItem = ({ color, active, onClick }) => {
 const Palette = ({ selected, onSelect }) => {
   return (
     <div className="Palette">
-      <h2>Color Selecter</h2>
+      <h2>Color Picker</h2>
       <div className="colors">
         {colors.map((color) => (
           <PaletteItem
