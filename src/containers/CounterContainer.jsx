@@ -6,16 +6,16 @@ import { connect } from "react-redux";
 const CounterContainer = (props) => {
   // props: {color: 'red', number: 0, increment: ƒ, decrement: ƒ}
 
+  const { color, number, increment, decrement } = props;
+  // 비구조화 할당
+
   const handleIncrement = () => {
-    props.increment();
+    increment();
   };
 
   const handleDecrement = () => {
-    props.decrement();
+    decrement();
   };
-
-  const { color, number } = props;
-  // 비구조화 할당
 
   return (
     <Counter
